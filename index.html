@@ -41,9 +41,27 @@
     <section class="card">
       <div class="total-row">
         <h2>Expenses</h2>
-        <div class="total">Total: <strong id="total">KES 0.00</strong></div>
+        <div class="total"><span id="total-label">Total</span>: <strong id="total">KES 0.00</strong></div>
       </div>
-      <p class="empty" id="empty">No expenses yet. Add your first one above.</p>
+      <div class="filters">
+        <div>
+          <label for="filter-category">Category</label>
+          <select id="filter-category">
+            <option value="">All categories</option>
+            <option>Food</option>
+            <option>Transport</option>
+            <option>Airtime</option>
+            <option>Rent</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label for="filter-month">Month</label>
+          <input id="filter-month" type="month" placeholder="YYYY-MM">
+        </div>
+        <button type="button" id="clear-filters" class="secondary-btn">Clear filters</button>
+      </div>
+      <p class="empty" id="empty"></p>
       <ul id="expense-list"></ul>
     </section>
   </main>

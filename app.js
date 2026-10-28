@@ -27,6 +27,10 @@ const formMessage = document.getElementById("form-message");
 const listEl = document.getElementById("expense-list");
 const emptyEl = document.getElementById("empty");
 const totalEl = document.getElementById("total");
+const totalLabelEl = document.getElementById("total-label");
+const filterCategory = document.getElementById("filter-category");
+const filterMonth = document.getElementById("filter-month");
+const clearFiltersBtn = document.getElementById("clear-filters");
 
 // ---------- Helpers ----------
 function todayString() {
@@ -46,8 +50,16 @@ function formatKES(n) {
 function render() {
   listEl.innerHTML = "";
 
+  // apply the filters (an empty filter means "show all")
+  const filtered = expenses.filter(function (e) {
+    const categoryOk = !filterCategory.value || e.category === filterCategory.value;
+    const monthOk = !filterMonth.value || e.date.startsWith(filterMonth.value);
+    return categoryOk && monthOk;
+  });
+  const isFiltering = Boolean(filterCategory.value || filterMonth.value);
+
   // newest date first
-  const sorted = expenses.slice().sort(function (a, b) {
+  const sorted = filtered.slice().sort(function (a, b) {
     return b.date.localeCompare(a.date) || b.id - a.id;
   });
 
@@ -91,7 +103,15 @@ function render() {
     listEl.appendChild(li);
   });
 
-  emptyEl.style.display = expenses.length === 0 ? "block" : "none";
+  if (filtered.length === 0) {
+    emptyEl.textContent = isFiltering
+      ? "No expenses match these filters."
+      : "No expenses yet. Add your first one above.";
+    emptyEl.style.display = "block";
+  } else {
+    emptyEl.style.display = "none";
+  }
+  totalLabelEl.textContent = isFiltering ? "Total (filtered)" : "Total";
   totalEl.textContent = formatKES(total);
 }
 
@@ -141,6 +161,15 @@ form.addEventListener("submit", function (event) {
   noteInput.value = "";
   formMessage.textContent = "Expense added!";
   amountInput.focus();
+  render();
+});
+
+// ---------- Filters ----------
+filterCategory.addEventListener("change", render);
+filterMonth.addEventListener("input", render);
+clearFiltersBtn.addEventListener("click", function () {
+  filterCategory.value = "";
+  filterMonth.value = "";
   render();
 });
 
