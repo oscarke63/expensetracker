@@ -39,10 +39,30 @@
     </section>
 
     <section class="card">
+      <h2>Monthly budgets (KES)</h2>
+      <p class="hint">Leave a box empty for no budget. Warnings appear at 80% and 100% of the month you are viewing.</p>
+      <form id="budget-form" novalidate>
+        <div class="budget-grid">
+          <div><label for="budget-Food">Food</label><input id="budget-Food" type="number" inputmode="decimal" min="0" step="0.01"></div>
+          <div><label for="budget-Transport">Transport</label><input id="budget-Transport" type="number" inputmode="decimal" min="0" step="0.01"></div>
+          <div><label for="budget-Airtime">Airtime</label><input id="budget-Airtime" type="number" inputmode="decimal" min="0" step="0.01"></div>
+          <div><label for="budget-Rent">Rent</label><input id="budget-Rent" type="number" inputmode="decimal" min="0" step="0.01"></div>
+          <div><label for="budget-Other">Other</label><input id="budget-Other" type="number" inputmode="decimal" min="0" step="0.01"></div>
+        </div>
+        <p class="error" id="budget-error"></p>
+        <button type="submit">Save budgets</button>
+        <p class="success" id="budget-message"></p>
+      </form>
+      <h3 id="budget-month-title"></h3>
+      <div id="budget-status"></div>
+    </section>
+
+    <section class="card">
       <div class="total-row">
         <h2>Expenses</h2>
         <div class="total"><span id="total-label">Total</span>: <strong id="total">KES 0.00</strong></div>
       </div>
+
       <div class="filters">
         <div>
           <label for="filter-category">Category</label>
@@ -61,10 +81,24 @@
         </div>
         <button type="button" id="clear-filters" class="secondary-btn">Clear filters</button>
       </div>
+
       <p class="empty" id="empty"></p>
       <ul id="expense-list"></ul>
+
+      <button type="button" id="export-btn" class="secondary-btn export-btn">Export CSV</button>
+      <p class="error" id="export-message"></p>
+    </section>
+
+    <section class="card">
+      <h2>Spending by category</h2>
+      <p class="empty" id="chart-empty">Add an expense to see your chart.</p>
+      <div class="chart-wrap" id="chart-wrap">
+        <canvas id="pie-chart" aria-label="Pie chart of spending by category" role="img"></canvas>
+      </div>
     </section>
   </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

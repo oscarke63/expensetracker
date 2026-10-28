@@ -1,0 +1,140 @@
+=====================================================================
+EXPENSE TRACKER - STEPS AND COMMANDS
+Plain HTML + CSS + JavaScript, saved in the browser (localStorage),
+Chart.js from a CDN, served by nginx in Docker, built by GitHub Actions.
+=====================================================================
+
+PART A - QUICK START (use the finished project)
+---------------------------------------------------------------------
+1. Get the code:
+     git clone git@github.com:oscarke63/expensetracker.git
+     cd expensetracker
+
+2. Run it without Docker (needs Python 3):
+     python3 -m http.server 8000
+   Open http://localhost:8000   (hard refresh: Ctrl+Shift+R)
+
+3. Run it with Docker:
+     docker build -t expense-tracker .
+     docker run -p 8080:80 expense-tracker
+   Open http://localhost:8080   (stop with Ctrl+C)
+
+
+PART B - BUILD IT FROM SCRATCH
+---------------------------------------------------------------------
+Step 0. One-time setup
+     git config --global user.name "Your Name"
+     git config --global user.email "you@example.com"
+     ssh -T git@github.com        # should say "successfully authenticated"
+
+   Install Docker (Ubuntu/Debian), then log out and back in:
+     sudo apt update && sudo apt install -y docker.io
+     sudo usermod -aG docker $USER
+     docker --version
+
+Step 1. Create the project and folders
+     mkdir expensetracker && cd expensetracker
+     mkdir -p .github/workflows
+     touch index.html style.css app.js Dockerfile README.md .dockerignore
+     git init -b main
+     git add .
+     git commit -m "Initial project structure"
+
+Step 2. Create an EMPTY repo on https://github.com/new
+   (Public, do not tick README/.gitignore), then connect and push:
+     git remote add origin git@github.com:YOUR_USERNAME/expensetracker.git
+     git push -u origin main
+
+Step 3. Dockerfile (file: Dockerfile)
+     FROM nginx:alpine
+     COPY index.html style.css app.js /usr/share/nginx/html/
+     EXPOSE 80
+
+   .dockerignore:
+     .git
+     .github
+     README.md
+
+Step 4. GitHub Actions (file: .github/workflows/docker.yml)
+     name: Build Docker image
+     on:
+       push:
+         branches: [main]
+       pull_request:
+     jobs:
+       build:
+         runs-on: ubuntu-latest
+         steps:
+           - uses: actions/checkout@v4
+           - name: Build the Docker image
+             run: docker build -t expense-tracker .
+           - name: Smoke test
+             run: |
+               docker run -d -p 8080:80 --name app expense-tracker
+               sleep 3
+               curl --fail http://localhost:8080 | grep "Expense Tracker"
+
+   Push, then open the Actions tab on GitHub and wait for a green tick:
+     git add .
+     git commit -m "Add Dockerfile and CI workflow"
+     git push
+   https://github.com/YOUR_USERNAME/expensetracker/actions
+
+Step 5. Features (build one, test it, commit, push, then the next)
+   1. Add an expense   - amount (KES), category, note, date, validation
+   2. List + delete    - delete button and running total
+   3. Filters          - by category and by month
+   4. Pie chart        - Chart.js via CDN, spending by category
+   5. Budgets          - per category, warnings at 80% and 100%
+   6. Export CSV       - downloads the expenses currently shown
+   7. Polish           - mobile friendly, empty states, validation
+
+   After each feature:
+     python3 -m http.server 8000     # test in the browser
+     git add .
+     git commit -m "Feature N: short description"
+     git push
+
+
+PART C - TEST CHECKLIST (do this before the demo)
+---------------------------------------------------------------------
+ [ ] Empty amount / 0 / negative amount shows a red error message
+ [ ] Add 2-3 expenses in different categories and two different months
+ [ ] Refresh the page - the expenses are still there
+ [ ] Delete works and the total updates
+ [ ] Category filter, month filter, and both together
+ [ ] "Clear filters" brings everything back
+ [ ] Pie chart updates when you add, delete or filter
+ [ ] Set a Food budget of 1000, add Food expenses of 800 -> warning at 80%,
+     add more to pass 1000 -> red message at 100%
+ [ ] Export CSV downloads a file that opens in Excel / Google Sheets
+ [ ] Shrink the browser to phone width - nothing overflows
+ [ ] GitHub Actions run is green
+
+
+PART D - COMMON PROBLEMS
+---------------------------------------------------------------------
+ docker: command not found
+     Install Docker (Step 0). Then log out and back in.
+ permission denied ... docker.sock
+     sudo usermod -aG docker $USER   then log out and back in.
+ Page looks old after a change
+     Hard refresh with Ctrl+Shift+R.
+ git push asks for a password
+     Use the SSH URL (git@github.com:...) not the https:// one.
+     Fix an existing remote with:
+       git remote set-url origin git@github.com:YOUR_USERNAME/expensetracker.git
+ Port already in use
+     Use another port, e.g.  docker run -p 8081:80 expense-tracker
+ Pie chart does not show
+     It loads Chart.js from the internet - check your connection.
+ Clear all saved data (browser console, F12):
+     localStorage.clear()
+ CI is red
+     Click the failed run on the Actions tab, open the red step, read the
+     error, and fix it.
+
+Useful Git commands:
+     git status            # what changed
+     git log --oneline     # list of commits
+     git diff              # see exact changes
