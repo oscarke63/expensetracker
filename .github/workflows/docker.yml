@@ -1,0 +1,22 @@
+name: Build Docker image
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Build the Docker image
+        run: docker build -t expense-tracker .
+
+      - name: Smoke test (start container and fetch the page)
+        run: |
+          docker run -d -p 8080:80 --name app expense-tracker
+          sleep 3
+          curl --fail http://localhost:8080 | grep "Expense Tracker"
