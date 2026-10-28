@@ -8,8 +8,37 @@
 </head>
 <body>
   <main>
-    <h1>Hello, Nairobi! 👋</h1>
-    <p>Expense Tracker is deployed and running.</p>
+    <h1>Expense Tracker</h1>
+
+    <section class="card">
+      <h2>Add expense</h2>
+      <form id="expense-form" novalidate>
+        <label for="amount">Amount (KES)</label>
+        <input id="amount" type="number" inputmode="decimal" step="0.01" placeholder="e.g. 250">
+        <p class="error" id="amount-error"></p>
+
+        <label for="category">Category</label>
+        <select id="category">
+          <option>Food</option>
+          <option>Transport</option>
+          <option>Airtime</option>
+          <option>Rent</option>
+          <option>Other</option>
+        </select>
+
+        <label for="note">Note (optional)</label>
+        <input id="note" type="text" maxlength="100" placeholder="e.g. Lunch at the canteen">
+
+        <label for="date">Date</label>
+        <input id="date" type="date">
+        <p class="error" id="date-error"></p>
+
+        <button type="submit">Add expense</button>
+        <p class="success" id="form-message"></p>
+      </form>
+    </section>
+
+    <p class="muted">Saved expenses: <strong id="count">0</strong></p>
   </main>
   <script src="app.js"></script>
 </body>
